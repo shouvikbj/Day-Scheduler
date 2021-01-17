@@ -120,6 +120,9 @@ def addDate():
         }
         datas.update(newData)
         os.makedirs(f"{APP_ROOT}/static/users/{userEmail}/{date}")
+        ignoreFile = open(f"{APP_ROOT}/static/users/{userEmail}/{date}/.gitignore", "w")
+        ignoreFile.write("!.gitignore")
+        ignoreFile.close()
         json_file = open(f"{APP_ROOT}/db/data.json", "w")
         json_file.seek(0)
         json.dump(datas, json_file, indent=2)
