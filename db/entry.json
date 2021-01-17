@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ca8d3b9c-9607-4391-80e7-73184ce5e95e",
+    "folder_id": "89bda3c7-4446-4565-93e8-e5956ec8023c",
+    "email": "shouvik.bajpayee@tcs.com",
+    "title": "Webex",
+    "lg_name": "BPY119",
+    "link": "https://tcs2.webex.com",
+    "meeting_id": "176 846 4601",
+    "meeting_password": "Xpr123",
+    "from_time": "8:50 AM",
+    "to_time": "10:30 AM"
+  },
+  {
+    "id": "ddafc758-ac1d-417e-bac3-fdf6c39d17a3",
+    "folder_id": "60f7e392-3032-44c2-b3cb-4ba77a58e409",
+    "email": "bajpayeeshouvik@gmail.com",
+    "title": "Webex",
+    "lg_name": "BPY119",
+    "link": "https://tcs2.webex.com",
+    "meeting_id": "1768464601",
+    "meeting_password": "Xpr123",
+    "from_time": "10:45 AM",
+    "to_time": "12:15 PM"
+  },
+  {
+    "id": "7b0462bd-69d5-4592-a285-8d8cf9e37c77",
+    "folder_id": "89bda3c7-4446-4565-93e8-e5956ec8023c",
+    "email": "shouvik.bajpayee@tcs.com",
+    "title": "Webex",
+    "lg_name": "BPY119",
+    "link": "tscxp.webex.com",
+    "meeting_id": "1231232222",
+    "meeting_password": "Xpr123",
+    "from_time": "10.45 am",
+    "to_time": "1.15 pm"
+  },
+  {
+    "id": "d0b2beb7-22d9-4efc-838c-2bf6b7805909",
+    "folder_id": "89bda3c7-4446-4565-93e8-e5956ec8023c",
+    "email": "shouvik.bajpayee@tcs.com",
+    "title": "Webex",
+    "lg_name": "",
+    "link": "tcs2.webex.com",
+    "meeting_id": "",
+    "meeting_password": "",
+    "from_time": "",
+    "to_time": ""
+  }
+]

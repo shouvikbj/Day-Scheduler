@@ -1,0 +1,40 @@
+<div class="container">
+  <h4 class="white-text center">Scheduled Dates</h4>
+  <br />
+  <div class="row center">
+    {% if(folders|length) %} {% for folder in folders %}
+
+    <div class="col">
+      <!-- <a id="link" href="/date/{{folder['id']}}"> -->
+      <div
+        class="card folder"
+        id="folder"
+        onclick="redirect(`{{folder['id']}}`)"
+        data-href="/date/{{folder['id']}}"
+      >
+        <div class="card-content white-text">
+          <h6>{{folder["date"]}}</h6>
+        </div>
+      </div>
+      <!-- </a> -->
+    </div>
+
+    {% endfor %} {% else %}
+    <div class="center">
+      <br /><br /><br /><br /><br /><br /><br />
+      <p class="green-text">No entries yet!</p>
+    </div>
+    {% endif %}
+  </div>
+  <!--  -->
+  <div href="#modalAdd" class="fixed-action-btn modal-trigger">
+    <a class="btn-floating btn-large waves-effect waves-light blue pulse"
+      ><i class="material-icons">event</i></a
+    >
+  </div>
+</div>
+<script>
+  function redirect(fid) {
+    $("#content").load(`/date/${fid}`);
+  }
+</script>

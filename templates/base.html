@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/pwa_logo/logo48.png" type="image/png" />
+    <title>Scheduler</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Compiled and minified JQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- changing fonts -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Quicksand&display=swap"
+      rel="stylesheet"
+    /> -->
+    <link rel="manifest" href="/manifest.json" />
+    <style>
+      body {
+        background-image: url("/bg/bg.jpg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+      }
+      .btn {
+        -moz-border-radius: 30px;
+        -webkit-border-radius: 30px;
+        border-radius: 30px;
+      }
+      .card {
+        -moz-border-radius: 30px;
+        -webkit-border-radius: 30px;
+        border-radius: 30px;
+        /* width: 100%; */
+        box-shadow: 0px 0px 20px -10px slategray;
+      }
+      .folder {
+        background-image: linear-gradient(to top right, #e1a2b8, #9f2bc1);
+      }
+      blockquote {
+        background-color: white;
+        padding-top: 4px;
+        padding-bottom: 6px;
+        -moz-border-radius: 30px;
+        -webkit-border-radius: 30px;
+        border-radius: 30px;
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        M.AutoInit();
+      });
+    </script>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages(with_categories=false) %} {% if
+    messages %} {% for message in messages %}
+
+    <!-- <div id="flashMessage" onload="flashMessage('message');"></div> -->
+    <script>
+      M.toast({ html: "{{message}}", classes: "rounded" });
+    </script>
+    {% endfor %} {% endif %} {% endwith %}
+    <!--  -->
+    <!-- Nav bar start -->
+    <nav class="white">
+      <div class="nav-wrapper">
+        <a class="brand-logo center black-text" onclick="loadHome()"
+          >Scheduler</a
+        >
+        {% if (loggedIn) %}
+        <ul class="left">
+          <li>
+            <a id="homeBtn" onclick="loadHome()">
+              <i class="small material-icons blue-text">home</i>
+            </a>
+          </li>
+        </ul>
+        <ul class="right">
+          <li>
+            <a href="/logout" id="logoutBtn">
+              <i class="small material-icons red-text">power_settings_new</i>
+            </a>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="right">
+          <li>
+            <a id="signupBtn">
+              <i class="small material-icons green-text">person_add</i>
+            </a>
+          </li>
+          <li>
+            <a id="loginBtn">
+              <i class="small material-icons blue-text">exit_to_app</i>
+            </a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+    </nav>
+    <!-- Nav bar end -->
+    <!-- Modal Structure -->
+    <div id="modalAdd" class="modal">
+      <div class="modal-content">
+        <div id="progress">
+          <div class="progress">
+            <div class="indeterminate blue"></div>
+          </div>
+          <br />
+        </div>
+        <h5>Add Schedule Date</h5>
+        <br />
+        <div class="input-field">
+          <input id="date" type="text" class="datepicker" required />
+          <label for="date">Schedule Date</label>
+        </div>
+        <br /><br /><br /><br /><br /><br /><br /><br />
+        <a class="left modal-close waves-effect waves-light btn red">Cancel</a>
+        <a id="addDate" class="right waves-effect waves-light btn blue">Add</a>
+      </div>
+      <br /><br />
+    </div>
+    <!--  -->
+    <!-- entry modal -->
+    <div id="addEntry" class="modal">
+      <div class="modal-content">
+        <div id="progress2">
+          <div class="progress">
+            <div class="indeterminate blue"></div>
+          </div>
+        </div>
+        <h5>Add details</h5>
+        <div class="input-field">
+          <input id="title" type="text" required />
+          <label for="title">Title/Type</label>
+        </div>
+        <div class="input-field">
+          <input id="lg_name" type="text" />
+          <label for="lg_name">LG Name</label>
+        </div>
+        <div class="input-field">
+          <input
+            id="link"
+            type="text"
+            placeholder="include 'http:// or https://'"
+          />
+          <label for="link">Meeting Link</label>
+        </div>
+        <div class="input-field">
+          <input id="meeting_id" type="text" />
+          <label for="meeting_id">Meeting Id/No</label>
+        </div>
+        <div class="input-field">
+          <input id="meeting_password" type="text" />
+          <label for="meeting_password">Meeting Password</label>
+        </div>
+        <div class="input-field">
+          <input id="from_time" type="text" placeholder="from time" />
+          <label for="from_time">From</label>
+        </div>
+        <div class="input-field">
+          <input id="to_time" type="text" placeholder="to time" />
+          <label for="to_time">To</label>
+        </div>
+        <br />
+        <a class="left modal-close waves-effect waves-light btn red">Cancel</a>
+        <a
+          id="makeEntry"
+          class="right waves-effect waves-light btn blue"
+          onclick="makeEntry()"
+          >Add</a
+        >
+      </div>
+      <br /><br />
+    </div>
+    <!--  -->
+    <!--  -->
+    <div class="content" id="content"></div>
+    <!--  -->
+    <!--  -->
+    <!-- JS - Scripts -->
+    <script>
+      function loadHome() {
+        $("#content").load("/index");
+      }
+    </script>
+    {% if (loggedIn) %}
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename = 'main.js') }}"
+    ></script>
+    {% else %}
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename = 'login.js') }}"
+    ></script>
+    {% endif %}
+    <script src="/app.js"></script>
+  </body>
+</html>

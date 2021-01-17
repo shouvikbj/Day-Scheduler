@@ -1,0 +1,112 @@
+<div>
+  <nav class="blue">
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a class="breadcrumb" onclick="loadHome()">Home</a>
+        <a class="breadcrumb" onclick="loadHome()">Folders</a>
+        <a class="breadcrumb" onclick="reloadPage(`{{fid}}`)"
+          >{{ folder_name }}</a
+        >
+      </div>
+    </div>
+  </nav>
+</div>
+<div class="container-fluid">
+  <div class="center">
+    <h5 class="white-text">{{folder_name}}</h5>
+    <h6 class="white-text" style="font-weight: bold">Schedules</h6>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col m3 s0"></div>
+    <div class="col m6 s12">
+      {% if (entries|length) %} {% for entry in entries %}
+      <blockquote>
+        <h6>
+          <span style="font-weight: bold">Title: </span>{{ entry["title"] }}
+        </h6>
+        <h6>
+          <span style="font-weight: bold">LG Name: </span>{{ entry["lg_name"] }}
+        </h6>
+        {% if (('http://' in entry['link']) or ('https://' in entry['link'])) %}
+        <h6>
+          <span style="font-weight: bold">Meeting URL: </span
+          ><a target="_blank" href="{{entry['link']}}">{{ entry["link"] }}</a>
+        </h6>
+        {% else %}
+        <h6>
+          <span style="font-weight: bold">Meeting URL: </span
+          ><a target="_blank" href="https://{{entry['link']}}"
+            >{{ entry["link"] }}</a
+          >
+        </h6>
+        {% endif %}
+        <h6>
+          <span style="font-weight: bold">Meeting ID: </span>{{
+          entry["meeting_id"] }}
+        </h6>
+        <h6>
+          <span style="font-weight: bold">Password: </span>{{
+          entry["meeting_password"] }}
+        </h6>
+        <h6>
+          <span style="font-weight: bold">Time: </span>{{ entry["from_time"] }}
+          to {{ entry["to_time"] }}
+        </h6>
+      </blockquote>
+      {% endfor %} {% else %}
+      <br /><br /><br /><br /><br /><br /><br />
+      <h5 class="center white-text">No entries Yet!</h5>
+      {% endif %}
+    </div>
+    <div class="col m3 s0"></div>
+  </div>
+  <!--  -->
+  <div href="#addEntry" class="fixed-action-btn modal-trigger">
+    <a class="btn-floating btn-large waves-effect waves-light blue pulse"
+      ><i class="material-icons">add</i></a
+    >
+  </div>
+</div>
+<br /><br /><br /><br /><br />
+<script>
+  function reloadPage(fid) {
+    $("#content").load("/date/{{fid}}");
+  }
+
+  function makeEntry() {
+    if ($("#title").val() == "") {
+      M.toast({ html: "Title can't be empty!", classes: "rounded" });
+    } else {
+      $("#progress2").show();
+      $.ajax({
+        method: "post",
+        url: "/makeEntry/{{fid}}",
+        data: {
+          title: $("#title").val(),
+          lg_name: $("#lg_name").val(),
+          link: $("#link").val(),
+          meeting_id: $("#meeting_id").val(),
+          meeting_password: $("#meeting_password").val(),
+          from_time: $("#from_time").val(),
+          to_time: $("#to_time").val(),
+        },
+        success: function (res) {
+          $("#title").val("");
+          $("#lg_name").val("");
+          $("#link").val("");
+          $("#meeting_id").val("");
+          $("#meeting_password").val("");
+          $("#from_time").val("");
+          $("#to_time").val("");
+          $("#progress2").hide();
+          M.toast({ html: `${res["message"]}`, classes: "rounded" });
+          $("#content").load(`/date/${res["id"]}`);
+          var elem = document.querySelectorAll("#addEntry");
+          var instance = M.Modal.init(elem, "close");
+          instances.close();
+        },
+      });
+    }
+  }
+</script>
