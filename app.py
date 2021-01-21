@@ -8,13 +8,17 @@ from flask import (
     flash,
     make_response,
 )
+from flask_bcrypt import Bcrypt
 import json
 import uuid
 import os
+# import bcrypt
+
 
 app = Flask(__name__, static_url_path="")
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 app.secret_key = "thisisasecretkey"
+bcrypt = Bcrypt(app)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,15 +30,18 @@ def signup():
     else:
         email = request.form.get("email")
         password = request.form.get("password")
+        hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
         json_file = open(f"{APP_ROOT}/db/login.json", "r")
         users = json.load(json_file)
         json_file.close()
         for _, value in users.items():
-            if value["email"] == email:
+            v_email = value["email"]
+            if email == v_email:
                 flash("Email already in use!")
                 return redirect(url_for("base"))
         uid = str(uuid.uuid4())
-        user = {uid: {"uid": uid, "email": email, "password": password}}
+        user = {uid: {"uid": uid, "email": email,
+                      "password": hashed_pw}}
         users.update(user)
         json_file = open(f"{APP_ROOT}/db/login.json", "w")
         json_file.seek(0)
@@ -56,11 +63,13 @@ def login():
         users = json.load(json_file)
         json_file.close()
         for _, user in users.items():
-            if (user["email"] == email) and (user["password"] == password):
-                resp = make_response(redirect(url_for("base")))
-                resp.set_cookie("tcs", email, max_age=60 * 60 * 24 * 365 * 2)
-                flash("Successfully logged in!")
-                return resp
+            if user["email"]==email:
+                hash_pw = user["password"].encode('utf-8')
+                if bcrypt.check_password_hash(hash_pw, password):
+                    resp = make_response(redirect(url_for("base")))
+                    resp.set_cookie("tcs", email, max_age=60 * 60 * 24 * 365 * 2)
+                    flash("Successfully logged in!")
+                    return resp
         flash("Wrong credentials! Try again.")
         return redirect(url_for("base"))
 
@@ -83,7 +92,7 @@ def index():
     datas = json.load(json_file)
     json_file.close()
     for key, value in datas.items():
-        if value["email"]==userEmail:
+        if value["email"] == userEmail:
             folders.append(value)
     folders.reverse()
     return render_template("index.html", folders=folders)
@@ -97,16 +106,14 @@ def addDate():
         json_file = open(f"{APP_ROOT}/db/data.json", "r")
         datas = json.load(json_file)
         json_file.close()
-        for key,value in datas.items():
-            if value["date"] == date and value["email"]==userEmail:
+        for key, value in datas.items():
+            if value["date"] == date and value["email"] == userEmail:
                 folder_id = value["id"]
-                # flash("Folder already exists!")
                 data_to_return = {
                     "message": "Folder already exists!",
                     "date": date,
                     "id": folder_id
                 }
-                # return redirect(f"/date/{folder_id}")
                 return jsonify(data_to_return)
         id = str(uuid.uuid4())
         newData = {
@@ -124,13 +131,11 @@ def addDate():
         json_file.seek(0)
         json.dump(datas, json_file, indent=2)
         json_file.close()
-        # flash("Folder created!")
         data_to_return = {
             "message": "Folder created!",
             "date": date,
             "id": id
         }
-        # return redirect(f"/date/{id}")
         return jsonify(data_to_return)
     else:
         flash("Login first!")
@@ -147,7 +152,7 @@ def showEntries(fid):
         json_file = open(f"{APP_ROOT}/db/data.json", "r")
         data = json.load(json_file)
         json_file.close()
-        for key,value in data.items():
+        for key, value in data.items():
             if value["id"] == fid and value["email"]:
                 folder_name = value["folder"]
                 entry_list = value["entries"]
@@ -180,10 +185,10 @@ def makeEntry(fid):
         json_file = open(f"{APP_ROOT}/db/data.json", "r")
         datas = json.load(json_file)
         json_file.close()
-        for key,value in datas.items():
-            if key==fid:
+        for key, value in datas.items():
+            if key == fid:
                 value["entries"].append(id)
-        json_file = open(f"{APP_ROOT}/db/data.json","w")
+        json_file = open(f"{APP_ROOT}/db/data.json", "w")
         json_file.seek(0)
         json.dump(datas, json_file, indent=2)
         json_file.close()
